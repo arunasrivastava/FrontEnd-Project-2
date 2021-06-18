@@ -1,9 +1,10 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
+canvas.width = 800;
+canvas.height = 800;
 document.body.appendChild(canvas);
+
 
 // Background image
 var bgReady = false;
@@ -13,31 +14,57 @@ bgImage.onload = function () {
 };
 bgImage.src = "images/background.png";
 
-// Hero image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-	heroReady = true;
+// trainer image
+var trainerReady = false;
+var trainerImage = new Image();
+trainerImage.onload = function () {
+	trainerReady = true;
 };
-heroImage.src = "images/hero.png";
+trainerImage.src = "images/sprite-animation.png";
 
-// Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-	monsterReady = true;
+// Pikachu image
+var pikachuReady = false;
+var pikachuImage = new Image();
+pikachuImage.onload = function () {
+	pikachuReady = true;
 };
-monsterImage.src = "images/monster.png";
+pikachuImage.src = "images/pikachu.png";
 
 // Game objects
-var hero = {
+var trainer = {
 	speed: 256 // movement in pixels per second
 };
-var monster = {};
-var monstersCaught = 0;
+var pikachu = {};
+var pikachusCaught = 0;
 
 // Handle keyboard controls
 var keysDown = {};
+
+//**********************SPRITE ANIMATION*********************
+
+var rows = 4; 
+var cols = 4;
+
+var trackRight = 2;
+var trackLeft = 1; 
+var trackUp = 0; 
+var trackDown = 3;
+
+var spriteWidth = 256; 
+var spriteHeight = 256; 
+var width = spriteWidth/cols;
+var height = spriteHeight / rows; 
+
+var curXFrame = 0; 
+var frameCount = 4; 
+var srcX = 0; 
+var srcY = 0; 
+
+var left = false; 
+var right = true; 
+var up = false; 
+var down = true;
+//**********************SPRITE ANIMATION*********************
 
 addEventListener("keydown", function (e) {
 	keysDown[e.keyCode] = true;
@@ -47,55 +74,87 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-// Reset the game when the player catches a monster
+// Reset the game when the player catches a pikachu
 var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
+	trainer.x = canvas.width / 2;
+	trainer.y = canvas.height / 2;
 
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
+	// Throw the pikachu somewhere on the screen randomly
+	pikachu.x = 32 + (Math.random() * (canvas.width - 128));
+	pikachu.y = 32 + (Math.random() * (canvas.height - 128));
 };
 
 // Update game objects
 var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
+	ctx.clearRect(trainer.x,trainer.y,width,height);
+	left = false; 
+	right = false; 
+
+	if (38 in keysDown && trainer.y > 32+4) { // Player holding up
+		trainer.y -= trainer.speed * modifier;
 	}
-	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
+	if (40 in keysDown && trainer.y < canvas.height - (96+2)) { // Player holding down
+		trainer.y += trainer.speed * modifier;
 	}
-	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
+	if (37 in keysDown && trainer.x > (32+4)) { // Player holding left
+		trainer.x -= trainer.speed * modifier;
+		left = true; 
+		right = false;
 	}
-	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+	if (39 in keysDown && trainer.x < canvas.width - (96+2)) { // Player holding right
+		trainer.x += trainer.speed * modifier;
+		left = false; 
+		right = true; 
 	}
 
 	// Are they touching?
 	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
+		trainer.x <= (pikachu.x + 64)
+		&& pikachu.x <= (trainer.x + 64)
+		&& trainer.y <= (pikachu.y + 64)
+		&& pikachu.y <= (trainer.y + 64)
 	) {
-		++monstersCaught;
+		++pikachusCaught;
 		reset();
+	}
+	
+	//To pick frame of sprite
+	//curXFrame = ++curXFrame % frameCount; 
+	//slow sprite animation 
+	var counter = 0;
+	if (counter == 5){
+		curXFrame = ++curXFrame % frameCount; 
+		counter = 0;
+	}
+	else{ 
+		counter++;
+	}
+	srcX = curXFrame * width;
+	if (left){
+		srcY = trackLeft * height;
+	}
+	if (right){ 
+		srcY = trackRight * height; 
+	}
+	if (left == false && right == false){
+		srcX = 1 * width; 
+		srcY = 2 * height; 
 	}
 };
 
 // Draw everything
 var render = function () {
+
 	if (bgReady) {
 		ctx.drawImage(bgImage, 0, 0);
 	}
 
-	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+	if (trainerReady){
+		ctx.drawImage(trainerImage,srcX, srcY, width, height, trainer.x, trainer.y,width, height);
 	}
 
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
+	if (pikachuReady) {
+		ctx.drawImage(pikachuImage, pikachu.x, pikachu.y);
 	}
 
 	// Score
@@ -103,7 +162,7 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Goblins caught: " + pikachusCaught, 32, 32);
 };
 
 // The main game loop
@@ -119,6 +178,7 @@ var main = function () {
 	// Request to do this again ASAP
 	requestAnimationFrame(main);
 };
+
 
 // Cross-browser support for requestAnimationFrame
 var w = window;
