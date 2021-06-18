@@ -13,7 +13,8 @@ bgImage.onload = function () {
 	bgReady = true;
 };
 bgImage.src = "images/background.png";
-
+//Sound
+const sound = new Audio("sound/Pikaaaa.mp3");
 // trainer image
 var trainerReady = false;
 var trainerImage = new Image();
@@ -63,7 +64,7 @@ var srcY = 0;
 var left = false; 
 var right = true; 
 var up = false; 
-var down = true;
+var down = false;
 //**********************SPRITE ANIMATION*********************
 
 addEventListener("keydown", function (e) {
@@ -89,22 +90,36 @@ var update = function (modifier) {
 	ctx.clearRect(trainer.x,trainer.y,width,height);
 	left = false; 
 	right = false; 
+	up = false; 
+	down = false;
 
 	if (38 in keysDown && trainer.y > 32+4) { // Player holding up
 		trainer.y -= trainer.speed * modifier;
+		left = false; 
+		right = false; 
+		up = true; 
+		down = false;
 	}
 	if (40 in keysDown && trainer.y < canvas.height - (96+2)) { // Player holding down
 		trainer.y += trainer.speed * modifier;
+		left = false; 
+		right = false; 
+		up = false; 
+		down = true;
 	}
 	if (37 in keysDown && trainer.x > (32+4)) { // Player holding left
 		trainer.x -= trainer.speed * modifier;
 		left = true; 
 		right = false;
+		up = false; 
+		down = false;
 	}
 	if (39 in keysDown && trainer.x < canvas.width - (96+2)) { // Player holding right
 		trainer.x += trainer.speed * modifier;
 		left = false; 
 		right = true; 
+		up = false; 
+		down = false;
 	}
 
 	// Are they touching?
@@ -115,6 +130,7 @@ var update = function (modifier) {
 		&& pikachu.y <= (trainer.y + 64)
 	) {
 		++pikachusCaught;
+		sound.play();
 		reset();
 	}
 	
@@ -129,7 +145,13 @@ var update = function (modifier) {
 	else{ 
 		counter++;
 	}
-	srcX = curXFrame * width;
+	if (up){
+		//srcX = curXFrame * width;
+		srcX = trackUp * width;
+	}
+	if (down){
+		srcX = trackDown * width;
+	}
 	if (left){
 		srcY = trackLeft * height;
 	}
@@ -162,7 +184,19 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + pikachusCaught, 32, 32);
+	if (pikachusCaught >= 5) {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.font = "100px arial";
+		ctx.fillStyle = "black";
+        ctx.strokeText("YOU WON!", canvas.width / 2, (canvas.height / 2) - 90);
+        trainerReady = false;
+        pikachuReady = false;
+    }
+	else {
+		ctx.fillStyle = "black";
+		ctx.fillText("Goblins caught: " + pikachusCaught, 45, 50);
+	}
 };
 
 // The main game loop
