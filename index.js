@@ -31,11 +31,17 @@ pikachuImage.onload = function () {
 };
 pikachuImage.src = "images/pikachu.png";
 
+
 // Game objects
 var trainer = {
-	speed: 256 // movement in pixels per second
+	speed: 256, // movement in pixels per second
+	x: 0,
+	y: 0
 };
-var pikachu = {};
+var pikachu = {
+	x: 0,
+	y: 0
+};
 var pikachusCaught = 0;
 
 // Handle keyboard controls
@@ -48,8 +54,8 @@ var cols = 4;
 
 var trackRight = 2;
 var trackLeft = 1; 
-var trackUp = 0; 
-var trackDown = 3;
+var trackUp = 3; 
+var trackDown = 0;
 
 var spriteWidth = 256; 
 var spriteHeight = 256; 
@@ -65,6 +71,8 @@ var left = false;
 var right = true; 
 var up = false; 
 var down = false;
+
+var counter = 1;
 //**********************SPRITE ANIMATION*********************
 
 addEventListener("keydown", function (e) {
@@ -90,36 +98,36 @@ var update = function (modifier) {
 	ctx.clearRect(trainer.x,trainer.y,width,height);
 	left = false; 
 	right = false; 
-	up = false; 
-	down = false;
+	down == false;
+	up == false;
 
-	if (38 in keysDown && trainer.y > 32+4) { // Player holding up
+	if (38 in keysDown && trainer.y > 0) { // Player holding up (32+4)
+		left = false;
+		right = false; 
+		up= true; 
+		down = false;
 		trainer.y -= trainer.speed * modifier;
-		left = false; 
-		right = false; 
-		up = true; 
-		down = false;
 	}
-	if (40 in keysDown && trainer.y < canvas.height - (96+2)) { // Player holding down
-		trainer.y += trainer.speed * modifier;
-		left = false; 
+	if (40 in keysDown && trainer.y < 960-64) { // Player holding down canvas.height-(96+2)
+		left = false;
 		right = false; 
-		up = false; 
+		up= false; 
 		down = true;
+		trainer.y += trainer.speed * modifier;
 	}
-	if (37 in keysDown && trainer.x > (32+4)) { // Player holding left
+	if (37 in keysDown && trainer.x > 0) { // Player holding left (32+4)
+		left = true;
+		right = false; 
+		up= false; 
+		down = false;
 		trainer.x -= trainer.speed * modifier;
-		left = true; 
-		right = false;
-		up = false; 
-		down = false;
 	}
-	if (39 in keysDown && trainer.x < canvas.width - (96+2)) { // Player holding right
-		trainer.x += trainer.speed * modifier;
-		left = false; 
+	if (39 in keysDown && trainer.x < 1024-64) { // Player holding right canvas.hwidth-(96+2)
+		left = false;
 		right = true; 
-		up = false; 
+		up= false; 
 		down = false;
+		trainer.x += trainer.speed * modifier;
 	}
 
 	// Are they touching?
@@ -137,7 +145,6 @@ var update = function (modifier) {
 	//To pick frame of sprite
 	//curXFrame = ++curXFrame % frameCount; 
 	//slow sprite animation 
-	var counter = 0;
 	if (counter == 5){
 		curXFrame = ++curXFrame % frameCount; 
 		counter = 0;
@@ -145,20 +152,20 @@ var update = function (modifier) {
 	else{ 
 		counter++;
 	}
-	if (up){
-		//srcX = curXFrame * width;
-		srcX = trackUp * width;
-	}
-	if (down){
-		srcX = trackDown * width;
-	}
+	srcX = curXFrame * width;
 	if (left){
 		srcY = trackLeft * height;
 	}
 	if (right){ 
 		srcY = trackRight * height; 
 	}
-	if (left == false && right == false){
+	if (up){
+		srcY = trackUp * height;
+	}
+	if (down){
+		srcY = trackDown * height;
+	}
+	if (left == false && right == false && up == false && down == false){
 		srcX = 1 * width; 
 		srcY = 2 * height; 
 	}
@@ -212,6 +219,7 @@ var main = function () {
 	// Request to do this again ASAP
 	requestAnimationFrame(main);
 };
+
 
 
 // Cross-browser support for requestAnimationFrame
