@@ -101,19 +101,19 @@ var update = function (modifier) {
 	down = false;
 	up = false;
 
-	if (38 in keysDown && trainer.y > 0) { // Player holding up (32+4)
+	if (38 in keysDown && trainer.y > (32+4)) { // Player holding up (32+4)
 		up= true; 
 		trainer.y -= trainer.speed * modifier;
 	}
-	if (40 in keysDown && trainer.y < 960-64) { // Player holding down canvas.height-(96+2)
+	if (40 in keysDown && trainer.y < canvas.height-(96+2)) { // Player holding down canvas.height-(96+2)
 		down = true;
 		trainer.y += trainer.speed * modifier;
 	}
-	if (37 in keysDown && trainer.x > 0) { // Player holding left (32+4)
+	if (37 in keysDown && trainer.x > (32+4)) { // Player holding left (32+4)
 		left = true;
 		trainer.x -= trainer.speed * modifier;
 	}
-	if (39 in keysDown && trainer.x < 1024-64) { // Player holding right canvas.hwidth-(96+2)
+	if (39 in keysDown && trainer.x < canvas.width-(96+2)) { // Player holding right canvas.hwidth-(96+2)
 		right = true; 
 		trainer.x += trainer.speed * modifier;
 	}
