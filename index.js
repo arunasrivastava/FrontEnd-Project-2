@@ -98,35 +98,23 @@ var update = function (modifier) {
 	ctx.clearRect(trainer.x,trainer.y,width,height);
 	left = false; 
 	right = false; 
-	down == false;
-	up == false;
+	down = false;
+	up = false;
 
 	if (38 in keysDown && trainer.y > 0) { // Player holding up (32+4)
-		left = false;
-		right = false; 
 		up= true; 
-		down = false;
 		trainer.y -= trainer.speed * modifier;
 	}
 	if (40 in keysDown && trainer.y < 960-64) { // Player holding down canvas.height-(96+2)
-		left = false;
-		right = false; 
-		up= false; 
 		down = true;
 		trainer.y += trainer.speed * modifier;
 	}
 	if (37 in keysDown && trainer.x > 0) { // Player holding left (32+4)
 		left = true;
-		right = false; 
-		up= false; 
-		down = false;
 		trainer.x -= trainer.speed * modifier;
 	}
 	if (39 in keysDown && trainer.x < 1024-64) { // Player holding right canvas.hwidth-(96+2)
-		left = false;
 		right = true; 
-		up= false; 
-		down = false;
 		trainer.x += trainer.speed * modifier;
 	}
 
