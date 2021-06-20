@@ -15,6 +15,8 @@ bgImage.onload = function () {
 bgImage.src = "images/background.png";
 //Sound
 const sound = new Audio("sound/Pikaaaa.mp3");
+const music = new Audio("sound/music.mp3");
+music.play();
 // trainer image
 var trainerReady = false;
 var trainerImage = new Image();
@@ -176,21 +178,22 @@ var render = function () {
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
+	ctx.font = "30px courier new";
+	ctx.lineWidth = 7;
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	if (pikachusCaught >= 5) {
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
-        ctx.font = "100px arial";
+        ctx.font = "100px courier new";
 		ctx.fillStyle = "black";
         ctx.strokeText("YOU WON!", canvas.width / 2, (canvas.height / 2) - 90);
         trainerReady = false;
         pikachuReady = false;
     }
 	else {
-		ctx.fillStyle = "black";
-		ctx.fillText("Goblins caught: " + pikachusCaught, 45, 50);
+		ctx.fillStyle = "white";
+		ctx.fillText("Pikachus caught: " + pikachusCaught, 65, 55);
 	}
 };
 
